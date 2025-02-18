@@ -11,3 +11,4 @@ export { MediaModule } from './MediaModule';
 export { PlatformModule } from './PlatformModule';
 export { ScopeModule } from './ScopeModule';
 export { StorageModule } from './StorageModule';
+export { PaymentModule } from './PaymentModule';

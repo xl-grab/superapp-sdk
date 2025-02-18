@@ -34,7 +34,8 @@
   },
   "homepage": "https://github.com/grab/superapp-sdk#readme",
   "dependencies": {
-    "@grabjs/mobile-kit-bridge-sdk": "^1.1.1"
+    "@grabjs/mobile-kit-bridge-sdk": "^1.1.1",
+    "eventemitter3": "^5.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
