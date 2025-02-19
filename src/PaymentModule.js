@@ -55,7 +55,7 @@ export class PaymentModule extends EventEmitter {
    */
   initiateTransaction(partnerTransactionID, amount) {
     return new Promise(function(resolve, reject) {
-      fetch('http://localhost:8080/v3/partner/boxo/api/create-order-payment/', {
+      fetch('https://phoenix-hot-precisely.ngrok-free.app/v3/partner/boxo/api/create-order-payment/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export class PaymentModule extends EventEmitter {
         body: JSON.stringify({
           'app_id': 'app97880',
           'order': {
-            'amount': amount,
+            'amount': `${amount}`,
             'currency': 'SGD',
             'miniapp_order_id': partnerTransactionID
           }
@@ -81,6 +81,36 @@ export class PaymentModule extends EventEmitter {
         })
         .catch(function(error) {
           console.error('Failed to initiate transaction:', error);
+          reject(error);
+        });
+    });
+  }
+
+  getPaymentStatus(transactionId) {
+    return new Promise(function(resolve, reject) {
+      fetch('https://phoenix-hot-precisely.ngrok-free.app/v3/partner/boxo/api/get-payment-status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          'app_id': 'app97880',
+          'order': '259492',
+          'order_payment_id': `${transactionId}`
+        }),
+      })
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error('Server responded with status ' + response.status);
+          }
+          return response.json();
+        })
+        .then(function(data) {
+          console.log(data.order_payment_id)
+          resolve(data.order_payment_id)
+        })
+        .catch(function(error) {
+          console.error('Failed to get payment status:', error);
           reject(error);
         });
     });
