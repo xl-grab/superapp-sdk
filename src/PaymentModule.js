@@ -52,7 +52,7 @@ export class PaymentModule extends EventEmitter {
   /**
    * Initiates a payment transaction by communicating with the backend server.
    * @returns {Promise<string>} A promise that resolves with the transaction ID.
-   */
+   */ 
   initiateTransaction(partnerTransactionID, amount) {
     return new Promise(function(resolve, reject) {
       fetch('https://phoenix-hot-precisely.ngrok-free.app/v3/partner/boxo/api/create-order-payment/', {
@@ -95,7 +95,7 @@ export class PaymentModule extends EventEmitter {
         },
         body: JSON.stringify({
           'app_id': 'app97880',
-          'order': '259492',
+          'cliend_id': '259492',
           'order_payment_id': `${transactionId}`
         }),
       })
@@ -107,7 +107,7 @@ export class PaymentModule extends EventEmitter {
         })
         .then(function(data) {
           console.log(data.order_payment_id)
-          resolve(data.order_payment_id)
+          resolve(data)
         })
         .catch(function(error) {
           console.error('Failed to get payment status:', error);
@@ -129,7 +129,8 @@ export class PaymentModule extends EventEmitter {
 
       const params = {
         method: 'triggerPayment',
-        data: { transactionId },
+        callback: '',
+        parameters: { transactionId },
       };
 
       // Store the resolve and reject functions to handle later
@@ -158,26 +159,17 @@ export class PaymentModule extends EventEmitter {
    * @param {PaymentStatusResponse} event - The payment completion event data.
    */
   handlePaymentCompleted(event) {
-    const { transactionId, status, details } = event;
+    const { transactionId, status } = event;
 
     const promiseHandlers = this.transactionPromises.get(transactionId);
 
     if (promiseHandlers) {
       const { resolve, reject } = promiseHandlers;
-
-      if (status === 'completed') {
-        resolve();
-      } else {
-        reject(new Error(details || 'Payment failed'));
-      }
-
-      // Remove the handlers as they are no longer needed
+      resolve()
       this.transactionPromises.delete(transactionId);
     } else {
       console.warn(`No matching promise found for transaction ID: ${transactionId}`);
     }
-
-    // Optionally, emit an event for React components to listen to
     this.emit('paymentCompleted', event);
   }
 
